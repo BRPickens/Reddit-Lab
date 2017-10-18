@@ -1,45 +1,27 @@
-$.get('https://www.reddit.com/r/programmerhumor/.json')
-.then((success) => {
-    var posts = configureResponse(success)
-
-    posts.forEach((post) =>{
-        var container = document.createElement('div');
-        var heading = document.createElement('h2');
-        var a = document.createElement('a');
-        var image = document.createElement('img');
-
-        heading.innerText = post.title;
-        image.setAttribute('src', formatSrc(post));
-        a.setAttribute('href', 'single.html?url=' + post.permalink);
-        a.appendChild(heading);
-        container.appendChild(a);
-        container.appendChild(image);
-        document.body.appendChild(container);
-    });
-});
-
-function configureResponse(data) {
-    var children = data.data.children;
-
-    return children.map(function(child, i) {
-        var post = {};
-        post.thumbnail = child.data.thumbnail;
-        post.title = child.data.title;
-        post.url = child.data.url;
-        post.permalink = child.data.permalink;
-
-        return post;
-    });
-}
-
-function formatSrc(post) {
-    if (/\.(gif|.gifv|jpg|jpeg|tiff|png)$/i.test(post.url)) {
-        if (post.url.indexOf('.gifv') != -1) {
-            return post.url.replace('.gifv', '.gif');
-        }
-
-        return post.url;
+$.get({url:"https://www.reddit.com/r/programmerhumor/.json"})
+    .then(function(sucess){
+    console.log(sucess);
+    let post= sucess.data.children;
+    console.log(post);
+   
+    for(i=0; i<post.length; i++){
+        let postContainer=document.createElement("div");
+        let link=document.createElement("a");
+        let previewImg=document.createElement("img");
+        let title=post[i].data.title;
+        let thumbnail=post[i].data.thumbnail;
+        previewImg.className ="thumbnail"
+        if(thumbnail=="self"){
+            previewImg.src="no-image-box.png";
+        }else{
+        previewImg.src=thumbnail;}
+        permalink=post[i].data.permalink
+        console.log(permalink);
+       link.href=`single.html?url=${permalink}`;
+        link.innerHTML=title;
+        postContainer.appendChild(link);
+        postContainer.appendChild(previewImg);
+        document.body.appendChild(postContainer);
     }
 
-    return post.thumbnail;
-}
+})
